@@ -1,6 +1,8 @@
 # angular-selenium-ci-docker
 Este repositório demonstra como usar o angular juntamente com o selenium hub para testes de unidade e aceitação em ambientes standalone e continuous integration/delivery
 
+[![Build Status](https://travis-ci.org/euprogramador/angular-selenium-ci-docker.svg?branch=master)](https://travis-ci.org/euprogramador/angular-selenium-ci-docker)
+
 ## Introdução
 
 Testes são uma forma de garantir que a codificação do programa especificado, esteja em conformidade com o que foi solicitado.
