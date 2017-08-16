@@ -39,10 +39,12 @@ Uma idéia interessante é usar o selenium hub e fazer com que os projetos apont
                                                                 +--------------+   
 </pre>
 
-### Docker com selenium hub
+### Docker com selenium
 
 Então podemos usar o docker para executar as instâcias do selenium hub e dos outros browsers.
 As imagens podem ser conferidas em: https://hub.docker.com/u/selenium/
+
+#### Docker com selenium hub e multiplas instancias de browser
 
 Para iniciar o grid via docker: 
 ```bash
@@ -59,12 +61,12 @@ Para disponibilizar uma instância de browser firefox use o comando docker abaix
 docker run -d --link selenium-hub:hub selenium/node-firefox
 ```
 
+#### Docker com selenium standalone
 
+As instâncias standalone são instâncias que não precisam do hub para funcionar, elas já incorporam o browser e o hub juntos em uma única imagem, isso permite mais agilidade para um teste local.
 
+Para executar uma instância standalone use:
 
-
-
-
-
-
-
+```bash
+docker run -d -p 4444:4444 selenium/standalone-chrome
+```
