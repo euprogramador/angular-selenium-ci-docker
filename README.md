@@ -18,3 +18,29 @@ Basicamente:
 
 * Usa QtWebkit
 * Não tem como inspecionar os elementos
+
+Para isso é melhor usar um browser que o usuário usa. Podemos usar o chrome, firefox, IE ou safari. O IE e o safari não permitem o uso em containeres de forma facilitada, ou pelo menos não conheço ainda.
+
+## Selenium HUB
+
+Uma idéia interessante é usar o selenium hub e fazer com que os projetos apontem para o hub, no hub configuramos as instâncias de browser.
+
+<pre>
++-----------------+           +--------------+                 +------------+
+| suite de testes |           |              |===============> | instancia  |
+| de unidade ou   |=========> | Hub selenium |                 | do chrome  |   
+| integração      |           |              |                 +------------+           
++-----------------+           +--------------+ 
+                                     ||
+                                     =========================> +--------------+
+                                                                |  instancia   |
+                                                                |  dos outros  |
+                                                                |  browsers    |
+                                                                +--------------+   
+</pre>
+
+### Docker com selenium hub
+Então podemos usar o docker para executar as instâcias do selenium hub e dos outros browsers.
+
+
+
