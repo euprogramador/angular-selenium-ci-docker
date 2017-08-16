@@ -123,18 +123,19 @@ customLaunchers: {
 browsers: ['swd_chrome'],
 
 ....
-
 ```
+Também ajustamos para o report dos testes serem feitos no console. 
 
-Precisamos também adicionar a dependência do webdriver no package.json:
+Precisamos também adicionar a dependência do webdriver e reporter no package.json:
 ```bash
-yarn add karma-webdriver-launcher --dev
+yarn add karma-webdriver-launcher karma-verbose-reporter --dev
 ```
 ou 
 ```bash
-npm i karma-webdriver-launcher --save-dev
+npm i karma-webdriver-launcher karma-verbose-reporter --save-dev
 ```
-Segue abaixo o karma.conf.js completo:
+
+Segue abaixo o karma.conf.js completo com os ajustes usados:
 ```javascript
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/0.13/config/configuration-file.html
@@ -188,5 +189,51 @@ module.exports = function (config) {
   });
 };
 ```
+
+Para rodar o teste agora usamos o comando abaixo:
+```bash
+ng test --colors --hostname=172.17.0.1  --code-coverage
 ```
+o IP 172.17.0.1 é o ip da instância local do docker, pode ser usado o seu ip real. O karma apenas precisa achar a instância do selenium em execução. Também estamos instruindo a gerar o report de cobertura de código.
+
+ao executar este comando obtemos o seguinte console:
+
+```bash
+$ ng test --colors --hostname=172.17.0.1
+The option '--hostname' is not registered with the test command. Run `ng test --help` for a list of supported options.
+ 10% building modules 1/1 modules 0 active16 08 2017 13:13:58.193:WARN [karma]: No captured browser, open http://172.17.0.1:9876/
+16 08 2017 13:13:58.204:INFO [karma]: Karma v1.7.0 server started at http://0.0.0.0:9876/
+16 08 2017 13:13:58.204:INFO [launcher]: Launching browser swd_chrome with unlimited concurrency
+16 08 2017 13:13:58.209:INFO [launcher]: Starting browser chrome via Remote WebDriver
+16 08 2017 13:14:04.815:WARN [karma]: No captured browser, open http://172.17.0.1:9876/ 
+16 08 2017 13:14:05.100:INFO [Chrome 59.0.3071 (Linux 0.0.0)]: Connected on socket 6keTI5DY6-_6XjF8AAAA with id 57429342
+Chrome 59.0.3071 (Linux 0.0.0): Executed 0 of 3 SUCCESS (0 secs / 0 secs)
+Chrome 59.0.3071 (Linux 0.0.0): Executed 1 of 3 SUCCESS (0 secs / 0.178 secs)
+Chrome 59.0.3071 (Linux 0.0.0): Executed 2 of 3 SUCCESS (0 secs / 0.242 secs)
+Chrome 59.0.3071 (Linux 0.0.0): Executed 3 of 3 SUCCESS (0 secs / 0.276 secs)
+Chrome 59.0.3071 (Linux 0.0.0): Executed 3 of 3 SUCCESS (0.296 secs / 0.276 secs)
+
+
+Suites and tests results:
+
+ - AppComponent :
+   * should create the app : ok
+   * should have as title 'app' : ok
+   * should render title in a h1 tag : ok
+
+Browser results:
+
+ - Chrome 59.0.3071 (Linux 0.0.0): 3 tests
+   - 3 ok
+
+```
+Desta forma o desenvolvimento dos testes pode continuar e ao alterar os arquivos o karma roda novamente os testes.
+
+caso queira executar apenas uma única vez sem o watch dos recursos basta adicionar a flag --single-run:
+```bash
+ng test --colors --hostname=172.17.0.1 --single-run  --code-coverage
+```
+
+
+
 
