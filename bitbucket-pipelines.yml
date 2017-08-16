@@ -1,0 +1,18 @@
+image: netczuk/node-yarn:node-6-yarn-0.18.1
+pipelines: 
+  default: 
+    - step: 
+        caches:
+          - node
+        script: 
+          - yarn 
+          - node node_modules/wd/scripts/build-browser-scripts.js
+          - yarn run test:ci
+          - yarn run e2e:ci
+          - yarn run compodoc
+        services: 
+          - selenium 
+definitions: 
+  services: 
+    selenium: 
+      image: selenium/standalone-chrome

@@ -1,0 +1,18 @@
+sudo: required
+
+language: javascript
+
+services:
+  - docker
+
+before_install:
+- docker pull netczuk/node-yarn:node-6-yarn-0.18.1
+- docker pull selenium/standalone-chrome
+- docker run -p 4444:4444 -d selenium/standalone-chrome
+
+script:
+- npm -g i yarn
+- yarn 
+- yarn run test:ci:travis
+- yarn run e2e:ci:travis
+- yarn run compodoc

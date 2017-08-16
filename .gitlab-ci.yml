@@ -1,0 +1,62 @@
+image: netczuk/node-yarn:node-6-yarn-0.18.1
+  
+stages:
+  - build
+  - tests
+  - documentation
+
+download_dependencies:
+  stage: build
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    untracked: true
+    paths:
+    - node_modules/
+  script:
+    - yarn
+
+unit_tests:
+  stage: tests
+  services:
+  - name: selenium/standalone-chrome
+    alias: selenium-unit
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    untracked: true
+    policy: pull
+    paths:
+    - node_modules/
+  script:
+  # necessário rodar este script antes pois ele não faz parte do processo de instalação
+  # vide: https://github.com/karma-runner/karma-sauce-launcher/issues/117 (comentario voltrevo de 9 de abril)
+    - node node_modules/wd/scripts/build-browser-scripts.js
+    - yarn run test:ci
+
+tests_e2e:
+  stage: tests
+  services:
+  - name: selenium/standalone-chrome
+    alias: selenium-e2e
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    untracked: true
+    policy: pull
+    paths:
+    - node_modules/
+  script:
+    - yarn run e2e:ci
+    
+pages:
+  stage: documentation
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    untracked: true
+    policy: pull
+    paths:
+    - node_modules/
+  script:
+    - yarn run compodoc
+    - mv documentation public
+  artifacts:
+    paths:
+    - public
