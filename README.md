@@ -498,6 +498,9 @@ tests_e2e:
     - ng e2e --host $(hostname -i) --config protractor.conf.ci.js   
 ```
 
+### Travis
+
+Este projeto está habilitado usando o travis. Os comandos são os mesmos basta olhar o arquivo .travis.yml.
 
 
 
