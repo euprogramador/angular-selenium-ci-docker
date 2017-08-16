@@ -11,8 +11,8 @@
     "e2e": "echo confira se seu ip está correto, senão corrija no /etc/hosts: $(hostname -i)  && ng e2e --host $(hostname -i)",
     "test:ci": "ng test --config=karma.conf.ci.js --single-run --hostname=$(hostname -i) --code-coverage",
     "test:ci:travis": "ng test --config=karma.conf.ci.js --single-run --hostname=172.17.0.1 --code-coverage",
-    "e2e:ci": "ng e2e --host $(hostname -i) --config protractor.conf.ci.js",
-    "e2e:ci:travis": "ng e2e --host 172.17.0.1 --config protractor.conf.ci.js",
+    "e2e:ci": "ng e2e --host $(hostname -i) --config protractor.conf.ci.travis.js",
+    "e2e:ci:travis": "ng e2e --host 172.17.0.1 --config protractor.conf.ci.travis.js",
     "lint": "ng lint",
     "compodoc": "compodoc -p src/tsconfig.app.json"
   },
