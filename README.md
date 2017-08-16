@@ -70,3 +70,123 @@ Para executar uma instância standalone use:
 ```bash
 docker run -d -p 4444:4444 selenium/standalone-chrome
 ```
+
+## Angular
+
+Este tutorial esta usando o angular cli para configurar um ambiente e ajustar a execução de um teste de unidade e integração usando o selenium, para isso usaremos a versão standalone que executa os testes em uma instancia especifica do browser.
+
+O projeto deve ser inicializado normalmente usando o angular cli mais recente, no exemplo usamos o resolvedor de pacotes yarn, mas os mesmos comandos servem para o npm também.
+
+```bash
+ng new projeto-selenium
+```
+Com isso teremos uma pasta chamada `projeto-selenium`, que contém o projeto.
+
+angular cli já inicia um ambiente com o karma e protractor configurados para um ambiente que temos uma GUI, como o nosso objetivo será de automátizar a execução em um ambiente de nuvem, esta abordagem não é apropriada para ser executada, uma vez que na nuvem, não teremos uma GUI. A abordagem aqui sugerida rodou perfeitamente usando gitlab pipelines e bitbucket pipelines, necessitando de poucos ajustes, que abordaremos mais a frente.
+
+Uma vez com o projeto inicializado, precisamos ajustar o karma e o protractor para usar o selenium que foi inicializado anteriormente.
+
+Para isso ajustamos o arquivo karma.conf.js e adicionar o plugin karma-webdriver-launcher:
+
+```javascript
+module.exports = function (config) {
+  config.set({
+    basePath: '',
+    frameworks: ['jasmine', '@angular/cli'],
+    plugins: [
+      require('karma-jasmine'),
+      require('karma-webdriver-launcher'), //// aqui substituimos o karma-chrome-launcher pelo karma-webdriver-launcher
+      require('karma-jasmine-html-reporter'),
+      require('karma-coverage-istanbul-reporter'),
+      require('@angular/cli/plugins/karma')
+    ],
+    ....
+```
+Agora precisamos informar para o plugin onde está localizado o nosso selenium, fazemos isso usando uma configuração de browser customizada e adicionamos esta configuração no karma.conf.js:
+
+```javascript
+...
+customLaunchers: {
+      swd_chrome: {
+         base: 'WebDriver',
+          config: {
+            hostname: '127.0.0.1' // endereço do host local pois fizemos bind de portas 4444 na imagem docker do selenium
+          },
+          browserName: 'chrome',
+          version: '',
+          name: 'Chrome',
+          pseudoActivityInterval: 30000
+      },
+    },
+....
+
+browsers: ['swd_chrome'],
+
+....
+
+```
+
+Precisamos também adicionar a dependência do webdriver no package.json:
+```bash
+yarn add karma-webdriver-launcher --dev
+```
+ou 
+```bash
+npm i karma-webdriver-launcher --save-dev
+```
+Segue abaixo o karma.conf.js completo:
+```javascript
+// Karma configuration file, see link for more information
+// https://karma-runner.github.io/0.13/config/configuration-file.html
+
+
+module.exports = function (config) {
+  config.set({
+    basePath: '',
+    frameworks: ['jasmine', '@angular/cli'],
+    plugins: [
+      require('karma-jasmine'),
+      require('karma-webdriver-launcher'),
+      require('karma-jasmine-html-reporter'),
+      require('karma-verbose-reporter'),
+      require('karma-coverage-istanbul-reporter'),
+      require('@angular/cli/plugins/karma')
+    ],
+    customLaunchers: {
+      swd_chrome: {
+         base: 'WebDriver',
+          config: {
+            hostname: '127.0.0.1'
+          },
+          browserName: 'chrome',
+          version: '',
+          name: 'Chrome',
+          pseudoActivityInterval: 30000
+      },
+    },
+    client:{
+      clearContext: false, // leave Jasmine Spec Runner output visible in browser
+      captureConsole: true,
+      mocha: {
+        bail: true
+      }
+    },
+    coverageIstanbulReporter: {
+      reports: [ 'html', 'lcovonly' ],
+      fixWebpackSourcePaths: true
+    },
+    angularCli: {
+      environment: 'dev'
+    },
+    reporters: ['progress',  'kjhtml', 'verbose'],
+    port: 9876,
+    colors: true,
+    logLevel: config.LOG_INFO,
+    autoWatch: true,
+    browsers: ['swd_chrome'],
+    singleRun: false
+  });
+};
+```
+```
+
